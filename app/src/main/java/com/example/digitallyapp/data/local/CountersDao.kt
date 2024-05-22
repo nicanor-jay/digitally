@@ -114,9 +114,10 @@ interface CountersDao {
 
     @Query(
         """
-        SELECT ce.*, c.resetFrequency 
-        FROM count_entries ce 
+        SELECT ce.*, c.resetFrequency
+        FROM count_entries ce
         JOIN counters c ON ce.counterId = c.id 
+        WHERE c.resetFrequency = 'Weekly'
         ORDER BY c.resetFrequency, ce.counterId, ce.dateTime;
     """
     )
