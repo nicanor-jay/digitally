@@ -114,11 +114,11 @@ interface CountersDao {
 
     @Query(
         """
-        SELECT ce.*, c.resetFrequency
+        SELECT ce.*
         FROM count_entries ce
         JOIN counters c ON ce.counterId = c.id 
         WHERE c.resetFrequency = 'Weekly'
-        ORDER BY c.resetFrequency, ce.counterId, ce.dateTime;
+        ORDER BY ce.counterId, ce.dateTime;
     """
     )
     fun getAllWeeklyCountEntries(): List<CountEntry>?

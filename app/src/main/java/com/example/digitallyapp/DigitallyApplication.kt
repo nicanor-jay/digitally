@@ -215,7 +215,8 @@ class DigitallyApplication : Application(), Application.ActivityLifecycleCallbac
                 // Check if the current entry is a consecutive duplicate of the previous one
                 if (prevEntry != null &&
                     entry.count == prevEntry.count &&
-                    entry.editedCount == prevEntry.editedCount
+                    entry.editedCount == prevEntry.editedCount &&
+                    !isDifferentWeek(entry.dateTime, prevEntry.dateTime)
                 ) {
                     deleteCountEntries += entry
                 }
@@ -225,10 +226,8 @@ class DigitallyApplication : Application(), Application.ActivityLifecycleCallbac
 
                 // Check if count is 0 and edited count is null or 0
                 if ((entry.count == 0) && (entry.editedCount == null || entry.editedCount == 0)) {
-                    // Check if it's the most recent count entry
-                    if (entry == sortedEntries.last()) {
-                        continue // Skip deletion for the most recent count entry
-                    } else {
+                    // Check if it's not the most recent entry in the entire list
+                    if (entry != weeklyCountEntries.last()) {
                         deleteCountEntries += entry
                     }
                 }
