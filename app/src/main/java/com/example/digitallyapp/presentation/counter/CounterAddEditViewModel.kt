@@ -122,25 +122,29 @@ class CounterAddEditViewModel(
         viewModelScope.launch {
             if (userAction == UserAction.NEW_COUNTER) {
                 val dateCreated = Calendar.getInstance(TimeZone.getTimeZone("UTC")).timeInMillis
-                val counterDetailsToInsert =
-                    counterUiState.value.counterDetails.copy(dateCreated = dateCreated)
-                val insertedId: Long =
-                    countersRepository.insertCounter(counterDetailsToInsert.toCounter())
-                //Initialise new counter with first entry
-                countersRepository.insertCountEntry(
-                    CountEntry(
-                        counterId = insertedId,
-                        dateTime = dateCreated,
-                        target = counterUiState.value.counterDetails.target
+                withContext(Dispatchers.IO) {
+                    val counterDetailsToInsert =
+                        counterUiState.value.counterDetails.copy(dateCreated = dateCreated)
+                    val insertedId: Long =
+                        countersRepository.insertCounter(counterDetailsToInsert.toCounter())
+                    //Initialise new counter with first entry
+                    countersRepository.insertCountEntry(
+                        CountEntry(
+                            counterId = insertedId,
+                            dateTime = dateCreated,
+                            target = counterUiState.value.counterDetails.target
+                        )
                     )
-                )
+                }
             } else {
-                countersRepository.updateCounter(counterUiState.value.counterDetails.toCounter())
-                if (counterUiState.value.counterDetails.target != existingCounter.target) {
-                    countersRepository.updateRecentCountEntryTarget(
-                        existingCounter.id,
-                        counterUiState.value.counterDetails.target
-                    )
+                withContext(Dispatchers.IO) {
+                    countersRepository.updateCounter(counterUiState.value.counterDetails.toCounter())
+                    if (counterUiState.value.counterDetails.target != existingCounter.target) {
+                        countersRepository.updateRecentCountEntryTarget(
+                            existingCounter.id,
+                            counterUiState.value.counterDetails.target
+                        )
+                    }
                 }
             }
         }

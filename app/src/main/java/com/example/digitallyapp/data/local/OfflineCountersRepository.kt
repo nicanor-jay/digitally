@@ -83,7 +83,7 @@ class OfflineCountersRepository(private val counterDao: CountersDao) : CountersR
         counterDao.updateNote(counterId, date, text)
 
     override suspend fun deleteNote(counterId: Long, date: Long) =
-        counterDao.deleteNote(counterId, date)
+                                                      counterDao.deleteNote(counterId, date)
 
     override suspend fun updateRecentCountEntryTarget(counterId: Long, target: Int?) =
         counterDao.updateRecentCountEntryTarget(counterId, target)
