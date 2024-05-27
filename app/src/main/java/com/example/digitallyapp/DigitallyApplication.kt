@@ -121,6 +121,10 @@ class DigitallyApplication : Application(), Application.ActivityLifecycleCallbac
 
                 Log.d(
                     "com.example.countingapp.CountingApplication",
+                    "Counter:  ${mostRecentCountEntry.counterId}"
+                )
+                Log.d(
+                    "com.example.countingapp.CountingApplication",
                     "Most Recent Entry ${formatDate(mostRecentCountEntry.dateTime, "dd/MM/yyyy")}"
                 )
 
@@ -227,7 +231,7 @@ class DigitallyApplication : Application(), Application.ActivityLifecycleCallbac
                 // Check if count is 0 and edited count is null or 0
                 if ((entry.count == 0) && (entry.editedCount == null || entry.editedCount == 0)) {
                     // Check if it's not the most recent entry in the entire list
-                    if (entry != weeklyCountEntries.last()) {
+                    if (entry != sortedEntries.last()) {
                         deleteCountEntries += entry
                     }
                 }
