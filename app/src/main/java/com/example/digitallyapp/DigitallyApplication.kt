@@ -116,72 +116,22 @@ class DigitallyApplication : Application(), Application.ActivityLifecycleCallbac
 
             val countersList = countersRepository.getAllCounters()
 
-            countersList?.forEach { counter ->
-                val mostRecentCountEntry = countersRepository.getMostRecentCountEntry(counter.id)
+            if (!countersList.isNullOrEmpty()) {
+                countersList?.forEach { counter ->
+                    val mostRecentCountEntry = countersRepository.getMostRecentCountEntry(counter.id)
 
-                Log.d(
-                    "com.example.countingapp.CountingApplication",
-                    "Counter:  ${mostRecentCountEntry.counterId}"
-                )
-                Log.d(
-                    "com.example.countingapp.CountingApplication",
-                    "Most Recent Entry ${formatDate(mostRecentCountEntry.dateTime, "dd/MM/yyyy")}"
-                )
+                    Log.d(
+                        "com.example.countingapp.CountingApplication",
+                        "Counter:  ${mostRecentCountEntry.counterId}"
+                    )
+                    Log.d(
+                        "com.example.countingapp.CountingApplication",
+                        "Most Recent Entry ${formatDate(mostRecentCountEntry.dateTime, "dd/MM/yyyy")}"
+                    )
 
-                when (counter.resetFrequency) {
-                    ResetFrequency.NONE -> {
-                        if (isDifferentDay(mostRecentCountEntry.dateTime, currentTimeStamp)) {
-                            val id = countersRepository.insertCountEntry(
-                                CountEntry(
-                                    counterId = counter.id,
-                                    count = mostRecentCountEntry.editedCount
-                                        ?: mostRecentCountEntry.count,
-                                    dateTime = currentTimeStamp,
-                                    target = counter.target
-                                )
-                            )
-                            Log.d(
-                                "DigitallyApplication, applyCounterResets()",
-                                "Count_Entry ID:$id inserted as dummy"
-                            )
-                        }
-                    }
-
-                    ResetFrequency.DAILY -> {
-                        if (isDifferentDay(mostRecentCountEntry.dateTime, currentTimeStamp)) {
-                            val id = countersRepository.insertCountEntry(
-                                CountEntry(
-                                    counterId = counter.id,
-                                    count = 0,  // Set the initial count value for a new day
-                                    dateTime = currentTimeStamp,
-                                    target = counter.target
-                                )
-                            )
-                            Log.d(
-                                "DigitallyApplication, applyCounterResets()",
-                                "Count_Entry ID:$id inserted as dummy"
-                            )
-                        }
-                    }
-
-                    ResetFrequency.WEEKLY -> {
-                        when {
-                            isDifferentWeek(mostRecentCountEntry.dateTime, currentTimeStamp) -> {
-                                val id = countersRepository.insertCountEntry(
-                                    CountEntry(
-                                        counterId = counter.id,
-                                        count = 0,
-                                        dateTime = currentTimeStamp,
-                                        target = counter.target
-                                    )
-                                )
-                                Log.d(
-                                    "DigitallyApplication, applyCounterResets()",
-                                    "Count_Entry ID:$id inserted as dummy"
-                                )
-                            }
-
-                            isDifferentDay(mostRecentCountEntry.dateTime, currentTimeStamp) -> {
+                    when (counter.resetFrequency) {
+                        ResetFrequency.NONE -> {
+                            if (isDifferentDay(mostRecentCountEntry.dateTime, currentTimeStamp)) {
                                 val id = countersRepository.insertCountEntry(
                                     CountEntry(
                                         counterId = counter.id,
@@ -195,6 +145,58 @@ class DigitallyApplication : Application(), Application.ActivityLifecycleCallbac
                                     "DigitallyApplication, applyCounterResets()",
                                     "Count_Entry ID:$id inserted as dummy"
                                 )
+                            }
+                        }
+
+                        ResetFrequency.DAILY -> {
+                            if (isDifferentDay(mostRecentCountEntry.dateTime, currentTimeStamp)) {
+                                val id = countersRepository.insertCountEntry(
+                                    CountEntry(
+                                        counterId = counter.id,
+                                        count = 0,  // Set the initial count value for a new day
+                                        dateTime = currentTimeStamp,
+                                        target = counter.target
+                                    )
+                                )
+                                Log.d(
+                                    "DigitallyApplication, applyCounterResets()",
+                                    "Count_Entry ID:$id inserted as dummy"
+                                )
+                            }
+                        }
+
+                        ResetFrequency.WEEKLY -> {
+                            when {
+                                isDifferentWeek(mostRecentCountEntry.dateTime, currentTimeStamp) -> {
+                                    val id = countersRepository.insertCountEntry(
+                                        CountEntry(
+                                            counterId = counter.id,
+                                            count = 0,
+                                            dateTime = currentTimeStamp,
+                                            target = counter.target
+                                        )
+                                    )
+                                    Log.d(
+                                        "DigitallyApplication, applyCounterResets()",
+                                        "Count_Entry ID:$id inserted as dummy"
+                                    )
+                                }
+
+                                isDifferentDay(mostRecentCountEntry.dateTime, currentTimeStamp) -> {
+                                    val id = countersRepository.insertCountEntry(
+                                        CountEntry(
+                                            counterId = counter.id,
+                                            count = mostRecentCountEntry.editedCount
+                                                ?: mostRecentCountEntry.count,
+                                            dateTime = currentTimeStamp,
+                                            target = counter.target
+                                        )
+                                    )
+                                    Log.d(
+                                        "DigitallyApplication, applyCounterResets()",
+                                        "Count_Entry ID:$id inserted as dummy"
+                                    )
+                                }
                             }
                         }
                     }

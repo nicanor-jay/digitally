@@ -1,22 +1,18 @@
 package com.example.digitallyapp.utils
 
-import java.util.Calendar
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.IsoFields
 
 fun isDifferentWeek(timestamp1: Long, timestamp2: Long): Boolean {
-    val calendar1 = Calendar.getInstance().apply {
-        timeInMillis = timestamp1
-        firstDayOfWeek = Calendar.MONDAY
-    }
-    val calendar2 = Calendar.getInstance().apply {
-        timeInMillis = timestamp2
-        firstDayOfWeek = Calendar.MONDAY
-    }
+    val date1 = Instant.ofEpochMilli(timestamp1).atZone(ZoneId.systemDefault()).toLocalDate()
+    val date2 = Instant.ofEpochMilli(timestamp2).atZone(ZoneId.systemDefault()).toLocalDate()
 
-    val year1 = calendar1.get(Calendar.YEAR)
-    val year2 = calendar2.get(Calendar.YEAR)
+    val week1 = date1.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+    val week2 = date2.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
-    val week1 = calendar1.get(Calendar.WEEK_OF_YEAR)
-    val week2 = calendar2.get(Calendar.WEEK_OF_YEAR)
+    val year1 = date1.year
+    val year2 = date2.year
 
     return year1 != year2 || week1 != week2
 }
