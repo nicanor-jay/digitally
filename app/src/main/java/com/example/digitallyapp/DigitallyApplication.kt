@@ -117,17 +117,36 @@ class DigitallyApplication : Application(), Application.ActivityLifecycleCallbac
             val countersList = countersRepository.getAllCounters()
 
             if (!countersList.isNullOrEmpty()) {
-                countersList?.forEach { counter ->
+                countersList.forEach { counter ->
                     val mostRecentCountEntry = countersRepository.getMostRecentCountEntry(counter.id)
 
-                    Log.d(
-                        "com.example.countingapp.CountingApplication",
-                        "Counter:  ${mostRecentCountEntry.counterId}"
-                    )
-                    Log.d(
-                        "com.example.countingapp.CountingApplication",
-                        "Most Recent Entry ${formatDate(mostRecentCountEntry.dateTime, "dd/MM/yyyy")}"
-                    )
+//                    If no most recent count entry exists, immediately create dummy to 0
+                    if (mostRecentCountEntry == null) {
+                        val id = countersRepository.insertCountEntry(
+                            CountEntry(
+                                counterId = counter.id,
+                                count = 0,
+                                dateTime = currentTimeStamp,
+                                target = counter.target
+                            )
+                        )
+                        Log.d(
+                            "DigitallyApplication, applyCounterResets()",
+                            "Initial Count_Entry ID:$id inserted for new counter"
+                        )
+                        return@forEach
+                    }
+                    else {
+                        Log.d(
+                            "com.example.countingapp.CountingApplication",
+                            "Counter:  ${mostRecentCountEntry.counterId}"
+                        )
+                        Log.d(
+                            "com.example.countingapp.CountingApplication",
+                            "Most Recent Entry ${formatDate(mostRecentCountEntry.dateTime, "dd/MM/yyyy")}"
+                        )
+                    }
+
 
                     when (counter.resetFrequency) {
                         ResetFrequency.NONE -> {

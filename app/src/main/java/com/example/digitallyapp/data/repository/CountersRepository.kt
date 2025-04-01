@@ -39,7 +39,7 @@ interface CountersRepository {
 
     suspend fun deleteCountEntryByIdAndDate(counterId: Long, dateTime: Long)
 
-    fun getMostRecentCountEntry(counterId: Long): CountEntry
+    fun getMostRecentCountEntry(counterId: Long): CountEntry?
 
     suspend fun getCountEntryByCounterIdAndDate(counterId: Long, datetime: Long): CountEntry?
 
