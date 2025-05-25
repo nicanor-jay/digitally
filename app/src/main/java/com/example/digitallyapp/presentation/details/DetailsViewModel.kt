@@ -664,20 +664,18 @@ class DetailsViewModel(
         for (i in startIndex until processedHistory.size) {
             val item = processedHistory[i]
 
-            //Skip invisible header boxes so streaks can continue over weeks
-            if (item.label != null) {
-                if ((item.color != Color.Transparent) && (item.target != null) && (item.count >= item.target)) {
-                    // Increase the current streak
-                    currentStreak++
+            // Skip month headers and blank boxes (both are Transparent and either have label or not)
+            val isSkippable = item.color == Color.Transparent && (item.label != null || item.target == null)
+            if (isSkippable) continue
 
-                    // Update the longest streak if necessary
-                    if (currentStreak > longestStreak) {
-                        longestStreak = currentStreak
-                    }
-                } else {
-                    // Reset the current streak if the conditions are not met
-                    currentStreak = 0
-                }
+            // Count only valid completed days
+            val isSuccessfulDay = item.target != null && item.count >= item.target
+
+            if (isSuccessfulDay) {
+                currentStreak++
+                longestStreak = maxOf(longestStreak, currentStreak)
+            } else {
+                currentStreak = 0
             }
         }
 
